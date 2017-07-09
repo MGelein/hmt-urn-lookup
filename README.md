@@ -8,3 +8,5 @@ Depending on the type of URN you can copy (in case of a person or place URN) it 
 
 ### Credits
 All credit for the data goes to the Homer Multitext project, their data curators and researchers. All of the data this website uses is pulled live from their GitHub.
+
+All of the scripting, design and testing has been done by myself, Mees Gelein. Any part of this code can be freely reused by others both commercially or non-commercially. 
