@@ -12,7 +12,7 @@ function copyTextToClipboard(element){
   textArea.style.outline = 'none';
   textArea.style.boxShadow = 'none';
   textArea.style.background = 'transparent';
-  textArea.value = copyText;
+  textArea.value = copyText.trim();
   document.body.appendChild(textArea);
   textArea.select();
   try {
