@@ -188,6 +188,24 @@ $(document).ready(function(){
       $('#indexURNIcon').removeClass().addClass('hidden');
       $('#indexURNLabel').html('');
   });
+
+  //When you focus on the field you clear it
+  $('#urnConvBox').focus(function(){
+    $('#urnConvBox').val('');
+    convertURNImage();
+  });
+  $('#urnConvBoxPers').focus(function(){
+    $('#urnConvBoxPers').val('');
+    convertURNPers();
+  });
+  $('#urnConvBoxPlace').focus(function(){
+    $('#urnConvBoxPlace').val('');
+    convertURNPlace();
+  });
+  $('#urnConvBoxIndex').focus(function(){
+    $('#urnConvBoxIndex').val('');
+    convertURNIndex();
+  });
 });
 
 /**
