@@ -102,7 +102,7 @@ function convertURNImage(){
     if(cCombo.name.indexOf(urnToConv) != -1){
       matches.push(
         "<a href='http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.imgName + "' target='_blank'>"
-        + cCombo.name.substr(cCombo.name.lastIndexOf(':') + 1) + '&nbsp;<>&nbsp;' +cCombo.imgName.substr(cCombo.imgName.lastIndexOf(':') + 1) 
+        + cCombo.name.substr(cCombo.name.lastIndexOf(':') + 1) + '&nbsp;<>&nbsp;' +cCombo.imgName.substr(cCombo.imgName.lastIndexOf(':') + 1)
         + "</a>"
       );
     }
