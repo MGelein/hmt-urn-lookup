@@ -2,10 +2,16 @@
   overflow-x: scroll;
 }
 
+.container{
+  width: 95% !important;
+}
+
 body{
   background-image: url("bg.jpg");
   background-attachment: fixed;
   background-size: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 #header{

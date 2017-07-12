@@ -6,7 +6,7 @@
   <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
   <meta http-equiv="pragma" content="no-cache" />
   <script src="js/jquery-3.2.1.min.js"></script>
-  <script src="js/urnconverter.min.js"></script>
+  <script src="js/urnconverter.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="css/style.min.css">
   <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -24,7 +24,24 @@
   </div>
   <div class="container">
     <div class="row">
-      <div class="col-xs-4">
+
+      <div class="col-xs-3">
+        <div class="panel panel-info">
+          <div class="panel-heading">Iliad Index to URN</div>
+          <div class="panel-body">
+            <label for="urnConvBoxIndex">Name of Folio:</label>&nbsp;<i>book.line use * as a wildcard</i>
+            <input id="urnConvBoxIndex" class="form-control" type="text" value="" onkeyup="convertURNIndex()"/>
+            <br>
+            <p><i class='glyphicon glyphicon-info-sign'></i>&nbsp;Click the URN of the Folio to look up the Image URN in the <span class="btn btn-primary btn-xs" style="pointer-events:none">Folio name to URN</span> tool</p>
+            <label for="urnConvertedIndex">URN of Folio:</label><br>
+            <span id="urnConvertedIndex"></span>
+            <p class='text-center loading'><i id="indexURNIcon" class="glyphicon glyphicon-repeat rotating"></i><br>
+              <span id="indexURNLabel">Loading remote file from Github...</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-3">
         <div class="panel panel-primary">
           <div class="panel-heading">Folio name to URN</div>
           <div class="panel-body">
@@ -40,7 +57,7 @@
         </div>
       </div>
 
-      <div class="col-xs-4">
+      <div class="col-xs-3">
         <div class="panel panel-default">
           <div class="panel-heading">Personal Name to URN</div>
           <div class="panel-body">
@@ -56,7 +73,7 @@
         </div>
       </div>
 
-      <div class="col-xs-4">
+      <div class="col-xs-3">
         <div class="panel panel-danger">
           <div class="panel-heading">Placename to URN</div>
           <div class="panel-body">

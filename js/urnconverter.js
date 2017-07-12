@@ -41,6 +41,55 @@ function showNotif(text){
   }, 2000);
 }
 
+/**Handles the conversion from a line to image**/
+var indexTable;
+function convertURNIndex(){
+  var urnToConv = $('#urnConvBoxIndex').val().toLowerCase();
+  var max = indexTable.length;
+  var cCombo;
+  var matches = [];
+  var duplicates = [];
+  var index;
+  var book;
+  var line;
+  var bookToConv = (urnToConv.length > 0) ? urnToConv : "*";
+  var lineToConv = "*";
+  if(urnToConv.indexOf(".") != -1){
+    bookToConv = urnToConv.split('.')[0];
+    if(urnToConv.split('.')[1].length > 0){
+      lineToConv = urnToConv.split('.')[1];
+    }
+  }
+  var folioName;
+  for(var i = 0; i < max; i++){
+    cCombo = indexTable[i];
+    index = cCombo.index.substr(cCombo.index.lastIndexOf(":") + 1);
+    book = index.split('.')[0];
+    line = index.split('.')[1];
+    if((book == bookToConv || bookToConv == "*") && (line == lineToConv || lineToConv == "*")){
+      index = cCombo.index.substr(cCombo.index.lastIndexOf(":") + 1);
+      if(matches.length > 400) break;
+      folioName = cCombo.folio.substring(0, cCombo.folio.indexOf('.v1'));
+      matches.push(
+        "<a href='#' onclick='fillInImageField(\"" + folioName.substr(folioName.lastIndexOf('.') + 1) + "\")'> " +
+        index + "&nbsp;<>&nbsp;" + folioName + "</a>"
+      );
+    }
+  }
+  var noResultText = "<div class='text-center'><h4>Oops, no results seem to match your query!</h4><br><p>Please check your spelling or go to the " +
+  "Github issue tracker to request this document to be changed to include your query.</p></div>";
+  if(matches.length == 0) matches.push(noResultText);
+  $('#urnConvertedIndex').html(matches.join("<br>"));
+}
+
+/**
+Fill the image search fill with the provided query
+**/
+function fillInImageField(string){
+  $('#urnConvBox').val(string);
+  convertURNImage();
+}
+
 /**Handles the urn conversion from a folio to an image*/
 var urnTable;
 function convertURNImage(){
@@ -52,7 +101,9 @@ function convertURNImage(){
     cCombo = urnTable[i];
     if(cCombo.name.indexOf(urnToConv) != -1){
       matches.push(
-        "<a href='http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.imgName + "' target='_blank'>" + cCombo.imgName + "</a>"
+        "<a href='http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.imgName + "' target='_blank'>"
+        + cCombo.name.substr(cCombo.name.lastIndexOf(':') + 1) + '&nbsp;<>&nbsp;' +cCombo.imgName.substr(cCombo.imgName.lastIndexOf(':') + 1) 
+        + "</a>"
       );
     }
   }
@@ -102,8 +153,6 @@ function convertURNPlace(){
 Called when the document is ready to be executed
 **/
 $(document).ready(function(){
-  //convertURNPers();
-  //convertURNPlace();
   $.ajax({
     url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/indices/tbsToDefaultImage/venA.csv"})
     .done(function(data) {
@@ -112,6 +161,7 @@ $(document).ready(function(){
       $('#imgURNIcon').removeClass().addClass('hidden');
       $('#imgURNLabel').html('');
   });
+
   $.ajax({
     url: "https://raw.githubusercontent.com/homermultitext/hmt-authlists/master/data/hmtnames.csv"})
     .done(function(data) {
@@ -120,13 +170,23 @@ $(document).ready(function(){
       $('#persURNIcon').removeClass().addClass('hidden');
       $('#persURNLabel').html('');
   });
+
   $.ajax({
     url: "https://raw.githubusercontent.com/homermultitext/hmt-authlists/master/data/hmtplaces.csv"})
     .done(function(data) {
       placeTable = csvJSON(data, true, ['urn','Label', 'Description','Pleiades','Status','Redirect'], true);
       convertURNPlace();
       $('#placeURNIcon').removeClass().addClass('hidden');
-      $('#persURNLabel').html('');
+      $('#placeURNLabel').html('');
+  });
+
+  $.ajax({
+    url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/indices/textToSurface/venetusA/venA-Iliad.csv"})
+    .done(function(data) {
+      indexTable = csvJSON(data, true, ['index','folio'], false);
+      convertURNIndex();
+      $('#indexURNIcon').removeClass().addClass('hidden');
+      $('#indexURNLabel').html('');
   });
 });
 
