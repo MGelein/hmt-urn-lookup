@@ -14,6 +14,7 @@
   <title>HMT URN Convertor</title>
 </head>
 <body>
+  <div id="backButtonHolder"><a href="../" type="button" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-backward"></i>&nbsp;More Tools</a></div>
   <div id="notification" class="hidden"><p id="notificationText" class="text-center"></p></div>
   <div id="header" class="jumbotron text-center">
     <p id="copyright" class="pull-right text-right">Written by Mees Gelein<br>
@@ -29,7 +30,7 @@
         <div class="panel panel-info">
           <div class="panel-heading">Iliad Index to URN</div>
           <div class="panel-body">
-            <label for="urnConvBoxIndex">Name of Folio:</label>&nbsp;<i>book.line use * as a wildcard</i>
+            <label for="urnConvBoxIndex">Name of Folio:</label>&nbsp;<i>e.g. *.11 = every book line 11</i>
             <input id="urnConvBoxIndex" class="form-control" type="text" value="" onkeyup="convertURNIndex()"/>
             <br>
             <p><i class='glyphicon glyphicon-info-sign'></i>&nbsp;Click the URN of the Folio to look up the Image URN in the <span class="btn btn-primary btn-xs" style="pointer-events:none">Folio name to URN</span> tool</p>
