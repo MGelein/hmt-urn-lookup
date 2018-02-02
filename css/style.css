@@ -10,6 +10,33 @@
   max-height: 20vh;
 }
 
+.entry{
+  padding: 2px;
+}
+
+.comp, .mg{
+  border: 1px solid black;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 4px;
+  cursor:pointer;
+  color: black;
+  margin-left: 2px;
+}
+
+.comp{
+  background-color: rgba(200, 200, 200, 0.6);
+}
+
+.mg{
+  background-color: rgba(253, 228, 161, 0.712);
+}
+
+.comp:hover, .mg:hover{
+  text-decoration: none;
+  background-color: white;
+}
+
 #backButtonHolder{
   position: absolute; /* Stay in place */
   margin: 1em;

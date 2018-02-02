@@ -100,17 +100,23 @@ function convertURNImage(){
   for(var i = 0; i < max; i++){
     cCombo = urnTable[i];
     if(cCombo.name.indexOf(urnToConv) != -1){
+      //Find out what folio this VA is exactly
+      var folio = cCombo.imgName.substr(cCombo.imgName.lastIndexOf(':') + 1).replace(/VA(....)N_..../g, '$1').toLowerCase();
+      var compImage = findCompImage(folio);
+      var mgImage = "http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.imgName;
       matches.push(
-        "<a href='http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.imgName + "' target='_blank'>"
-        + cCombo.name.substr(cCombo.name.lastIndexOf(':') + 1) + '&nbsp;<>&nbsp;' +cCombo.imgName.substr(cCombo.imgName.lastIndexOf(':') + 1)
-        + "</a>"
+        "<div class='entry'>" +
+        cCombo.name.substr(cCombo.name.lastIndexOf(':') + 1) + ':&nbsp;' +
+        "<a class='mg pull-right' target='_blank' href='" + mgImage + "'>Marc. Graec.</a>&nbsp;" +
+        "<a class='comp pull-right' target='_blank' href='" + compImage + "'>Comparetti</a>&nbsp;" +
+        "</div>"
       );
     }
   }
   var noResultText = "<div class='text-center'><h4>Oops, no results seem to match your query!</h4><br><p>Please check your spelling or go to the " +
   "Github issue tracker to request this document to be changed to include your query.</p></div>";
   if(matches.length == 0) matches.push(noResultText);
-  $('#urnConverted').html(matches.join("<br>"));
+  $('#urnConverted').html(matches.join(""));
 }
 
 /**Handles the urn conversion from a persName to a URN**/
@@ -147,6 +153,19 @@ function convertURNPlace(){
     }
   }
   $('#urnConvertedPlace').html(matches.join("<br>"));
+}
+
+/**Handles the urn conversion from a placename to a URN */
+var compTable;
+function findCompImage(folio){
+  if(!compTable) return "";
+  var vaImage = "urn:cite:hmt:comp.va" + folio + ".v1"
+  for(var i = 0; i < compTable.length; i++){
+    var cComp = compTable[i];
+    if(cComp.va == vaImage){
+      return "http://www.homermultitext.org/hmt-digital/ict.html?urn=" + cComp.comp; 
+    }
+  }
 }
 
 /**
@@ -187,6 +206,12 @@ $(document).ready(function(){
       convertURNIndex();
       $('#indexURNIcon').removeClass().addClass('hidden');
       $('#indexURNLabel').html('');
+  });
+
+  $.ajax({
+    url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/indices/tbsToDefaultImage/comparetti.csv"})
+    .done(function(data){
+      compTable = csvJSON(data, true, ['va', 'comp'], true);
   });
 
   //When you focus on the field you clear it
