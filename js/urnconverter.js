@@ -91,24 +91,24 @@ function fillInImageField(string){
 }
 
 /**Handles the urn conversion from a folio to an image*/
-var urnTable;
+var urnTable = [];
 function convertURNImage(){
   var urnToConv = $('#urnConvBox').val().toLowerCase();
   var max = urnTable.length;
   var cCombo;
   var matches = [];
+  //Go through all urns
   for(var i = 0; i < max; i++){
     cCombo = urnTable[i];
-    if(cCombo.name.indexOf(urnToConv) != -1){
+    if(cCombo.urn.indexOf(urnToConv) != -1){
       //Find out what folio this VA is exactly
-      var folio = cCombo.imgName.substr(cCombo.imgName.lastIndexOf(':') + 1).replace(/VA(....)N_..../g, '$1').toLowerCase();
-      var compImage = findCompImage(folio);
-      var mgImage = "http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.imgName;
+      var folio = cCombo.defaultimg.substr(cCombo.defaultimg.lastIndexOf(':') + 1).replace(/VA(....)N_..../g, '$1').toLowerCase();
+      var mgImage = "http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.defaultimg;
       matches.push(
         "<div class='entry'>" +
-        cCombo.name.substr(cCombo.name.lastIndexOf(':') + 1) + ':&nbsp;' +
+        cCombo.urn.substr(cCombo.urn.lastIndexOf(':') + 1) + ':&nbsp;' +
         "<a class='mg pull-right' target='_blank' href='" + mgImage + "'>Marc. Graec.</a>&nbsp;" +
-        "<a class='comp pull-right' target='_blank' href='" + compImage + "'>Comparetti</a>&nbsp;" +
+        "<a class='comp pull-right' target='_blank' href='#'>Comparetti</a>&nbsp;" +
         "</div>"
       );
     }
@@ -172,14 +172,6 @@ function findCompImage(folio){
 Called when the document is ready to be executed
 **/
 $(document).ready(function(){
-  $.ajax({
-    url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/indices/tbsToDefaultImage/venA.csv"})
-    .done(function(data) {
-      urnTable = csvJSON(data, true, ['name', 'imgName'], false);
-      convertURNImage();
-      $('#imgURNIcon').removeClass().addClass('hidden');
-      $('#imgURNLabel').html('');
-  });
 
   $.ajax({
     url: "https://raw.githubusercontent.com/homermultitext/hmt-authlists/master/data/hmtnames.csv"})
@@ -198,7 +190,7 @@ $(document).ready(function(){
       $('#placeURNIcon').removeClass().addClass('hidden');
       $('#placeURNLabel').html('');
   });
-
+/*
   $.ajax({
     url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/indices/textToSurface/venetusA/venA-Iliad.csv"})
     .done(function(data) {
@@ -206,13 +198,25 @@ $(document).ready(function(){
       convertURNIndex();
       $('#indexURNIcon').removeClass().addClass('hidden');
       $('#indexURNLabel').html('');
-  });
+  });*/
 
+  /*
   $.ajax({
     url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/indices/tbsToDefaultImage/comparetti.csv"})
     .done(function(data){
       compTable = csvJSON(data, true, ['va', 'comp'], true);
+  });*/
+
+  $.ajax({
+    url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/codices/vapages.cex"})
+    .done(function(data){
+      cexJSON(data, '#!citedata');
+      convertURNImage();
+      $('#imgURNIcon').removeClass().addClass('hidden');
+      $('#imgURNLabel').html('');
   });
+
+  
 
   //When you focus on the field you clear it
   $('#urnConvBox').focus(function(){
@@ -258,4 +262,51 @@ function csvJSON(csv, userDefinedHeader, headerDef){
 	  result.push(obj);
   }
   return result;
+}
+
+/**
+ * Parses the provided file as a string startgin from the provided header.
+ * Returns a JSON result
+ * @param {String} file 
+ * @param {String} header 
+ */
+function cexJSON(file, header){
+  console.log("Converting file");
+  var lines = file.split('\n');
+  var foundIndex = -1;
+  var endIndex = -1;
+  for(var i = 0 ; i < lines.length; i++){
+    //Try to find the starting header
+    if(lines[i].indexOf(header) == 0){
+      foundIndex = i;
+      continue;
+    }
+    //Next section start
+    if(lines[i].indexOf('#!') == 0 && foundIndex > -1){
+      endIndex = i;
+      break;
+    }
+  }
+
+  //If we haven't found another topic, read untill end
+  if(endIndex == -1) endIndex = lines.length;
+
+  //Read the headerline and parse it into the object
+  var headerNames = lines[foundIndex + 1].split('#');
+
+  //Go through all the lines and parse them into the object
+  for(var i = foundIndex + 2; i < endIndex; i ++){
+    //Skip this line if empty
+    if(lines[i].trim().length < 1) continue;
+    //Create an empty entry
+    var entry = {};
+    //Split the line into parts
+    var items = lines[i].split('#');
+    //Go through every item and enter them
+    for(var j = 0; j < items.length; j++){
+      entry[headerNames[j]] = items[j];
+    }
+    //Now add the entry to the list
+    urnTable.push(entry);
+  }
 }
