@@ -102,8 +102,8 @@ function convertURNImage(){
     cCombo = urnTable[i];
     if(cCombo.urn.indexOf(urnToConv) != -1){
       //Find out what folio this VA is exactly
-      var folio = cCombo.defaultimg.substr(cCombo.defaultimg.lastIndexOf(':') + 1).replace(/VA(....)N_..../g, '$1').toLowerCase();
-      var mgImage = "http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.defaultimg;
+      var folio = cCombo.image.substr(cCombo.image.lastIndexOf(':') + 1).replace(/VA(....)N_..../g, '$1').toLowerCase();
+      var mgImage = "http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.image;
       matches.push(
         "<div class='entry'>" +
         cCombo.urn.substr(cCombo.urn.lastIndexOf(':') + 1) + ':&nbsp;' +
