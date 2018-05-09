@@ -92,6 +92,7 @@ function fillInImageField(string){
 
 /**Handles the urn conversion from a folio to an image*/
 var urnTable = [];
+var comparetti = {};
 function convertURNImage(){
   var urnToConv = $('#urnConvBox').val().toLowerCase();
   var max = urnTable.length;
@@ -104,11 +105,15 @@ function convertURNImage(){
       //Find out what folio this VA is exactly
       var folio = cCombo.image.substr(cCombo.image.lastIndexOf(':') + 1).replace(/VA(....)N_..../g, '$1').toLowerCase();
       var mgImage = "http://www.homermultitext.org/ict2/index.html?urn=" + cCombo.image;
+      cpFolio = comparetti[folio];
+      var cpImage;
+      if(cpFolio) cpImage = "http://www.homermultitext.org/ict2/index.html?urn=" + cpFolio.urn;
+      else cpImage = "#";
       matches.push(
         "<div class='entry'>" +
         cCombo.urn.substr(cCombo.urn.lastIndexOf(':') + 1) + ':&nbsp;' +
         "<a class='mg pull-right' target='_blank' href='" + mgImage + "'>Marc. Graec.</a>&nbsp;" +
-        "<a class='comp pull-right' target='_blank' href='#'>Comparetti</a>&nbsp;" +
+        "<a class='comp pull-right' target='_blank' href='" + cpImage + "'>Comparetti</a>&nbsp;" +
         "</div>"
       );
     }
@@ -117,6 +122,10 @@ function convertURNImage(){
   "Github issue tracker to request this document to be changed to include your query.</p></div>";
   if(matches.length == 0) matches.push(noResultText);
   $('#urnConverted').html(matches.join(""));
+
+  //Hide the comparetti links without a link
+  $('.comp').removeClass('hide');
+  $('.comp[href="#"]').addClass('hide');
 }
 
 /**Handles the urn conversion from a persName to a URN**/
@@ -153,19 +162,6 @@ function convertURNPlace(){
     }
   }
   $('#urnConvertedPlace').html(matches.join("<br>"));
-}
-
-/**Handles the urn conversion from a placename to a URN */
-var compTable;
-function findCompImage(folio){
-  if(!compTable) return "";
-  var vaImage = "urn:cite:hmt:comp.va" + folio + ".v1"
-  for(var i = 0; i < compTable.length; i++){
-    var cComp = compTable[i];
-    if(cComp.va == vaImage){
-      return "http://www.homermultitext.org/hmt-digital/ict.html?urn=" + cComp.comp; 
-    }
-  }
 }
 
 /**
@@ -207,15 +203,26 @@ $(document).ready(function(){
       compTable = csvJSON(data, true, ['va', 'comp'], true);
   });*/
 
+  var compDone = false;
+  var vaDone = false;
   $.ajax({
     url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/codices/vapages.cex"})
     .done(function(data){
-      cexJSON(data, '#!citedata');
-      convertURNImage();
+      urnTable = cexJSON(data, '#!citedata');
       $('#imgURNIcon').removeClass().addClass('hidden');
       $('#imgURNLabel').html('');
+      vaDone = true;
+      if(vaDone && compDone) convertURNImage();
   });
 
+  $.ajax({
+    url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/images/comparetti-imgs.cex"})
+    .done(function(data){
+      compTable = cexJSON(data, '#!citedata');
+      convertCompTable();
+      compDone = true;
+      if(vaDone && compDone) convertURNImage();
+  });
   
 
   //When you focus on the field you clear it
@@ -236,6 +243,21 @@ $(document).ready(function(){
     convertURNIndex();
   });
 });
+
+/**
+ * Splits the data from the JSON into something searchable by folio
+ */
+function convertCompTable(){
+  comparetti = {};
+  for(var i = 0; i < compTable.length; i++){
+    var urn = compTable[i].urn;
+    var folio = urn.split("_")[1];
+    folio = folio.replace('recto', 'r');
+    folio = folio.replace('verso', 'v');
+    folio = folio.substr(0, 4);
+    comparetti[folio] = compTable[i];
+  }
+}
 
 /**
 Convert csv to JSON. This is used on the csv files loaded
@@ -275,6 +297,7 @@ function cexJSON(file, header){
   var lines = file.split('\n');
   var foundIndex = -1;
   var endIndex = -1;
+  var table = [];
   for(var i = 0 ; i < lines.length; i++){
     //Try to find the starting header
     if(lines[i].indexOf(header) == 0){
@@ -307,6 +330,8 @@ function cexJSON(file, header){
       entry[headerNames[j]] = items[j];
     }
     //Now add the entry to the list
-    urnTable.push(entry);
+    table.push(entry);
   }
+
+  return table;
 }

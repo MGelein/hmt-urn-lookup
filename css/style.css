@@ -26,8 +26,10 @@
 
 .comp{
   background-color: rgba(200, 200, 200, 0.6);
+}
+
+.comp.hide{
   opacity: 0.1;
-  cursor: not-allowed;
 }
 
 .mg{
