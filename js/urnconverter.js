@@ -168,43 +168,24 @@ function convertURNPlace(){
 Called when the document is ready to be executed
 **/
 $(document).ready(function(){
-
   $.ajax({
-    url: "https://raw.githubusercontent.com/homermultitext/hmt-authlists/master/data/hmtnames.csv"})
+    url: "https://raw.githubusercontent.com/homermultitext/hmt-authlists/master/data/hmtnames.cex"})
     .done(function(data) {
-      persTable = csvJSON(data, true, ['urn','Label', 'Description','Status','Redirect','StemClass'], true);
+      persTable = cexJSON(data, "#!citedata");
       convertURNPers();
       $('#persURNIcon').removeClass().addClass('hidden');
       $('#persURNLabel').html('');
   });
 
   $.ajax({
-    url: "https://raw.githubusercontent.com/homermultitext/hmt-authlists/master/data/hmtplaces.csv"})
+    url: "https://raw.githubusercontent.com/homermultitext/hmt-authlists/master/data/hmtplaces.cex"})
     .done(function(data) {
-      placeTable = csvJSON(data, true, ['urn','Label', 'Description','Pleiades','Status','Redirect'], true);
+      placeTable = cexJSON(data, "#!citedata");
       convertURNPlace();
       $('#placeURNIcon').removeClass().addClass('hidden');
       $('#placeURNLabel').html('');
   });
-/*
-  $.ajax({
-    url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/indices/textToSurface/venetusA/venA-Iliad.csv"})
-    .done(function(data) {
-      indexTable = csvJSON(data, true, ['index','folio'], false);
-      convertURNIndex();
-      $('#indexURNIcon').removeClass().addClass('hidden');
-      $('#indexURNLabel').html('');
-  });*/
 
-  /*
-  $.ajax({
-    url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/indices/tbsToDefaultImage/comparetti.csv"})
-    .done(function(data){
-      compTable = csvJSON(data, true, ['va', 'comp'], true);
-  });*/
-
-  var compDone = false;
-  var vaDone = false;
   $.ajax({
     url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/codices/vapages.cex"})
     .done(function(data){
