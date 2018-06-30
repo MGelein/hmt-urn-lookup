@@ -91,6 +91,15 @@ function fillInImageField(string){
   convertURNImage();
 }
 
+/**
+ * Activate all BS tooltips
+ */
+function activateTooltips(){
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  });
+}
+
 /**Handles the urn conversion from a folio to an image*/
 var urnTable = [];
 var comparetti = {};
@@ -140,11 +149,12 @@ function convertURNPers(){
     cCombo = persTable[i];
     if(cCombo.label.toLowerCase().indexOf(urnToConv) != -1 && cCombo.status != 'rejected' && cCombo.urn != "urn"){
         matches.push(
-          "<span class='clickLink' onclick='copyTextToClipboard(this)'>" + cCombo.urn + " <> " + cCombo.label + "</span>"
+          "<span class='clickLink' data-toggle='tooltip' title='" + cCombo.description +"' onclick='copyTextToClipboard(this)'>" + cCombo.urn + " <> " + cCombo.label + "</span>"
         );
     }
   }
   $('#urnConvertedPers').html(matches.join("<br>"));
+  activateTooltips();
 }
 
 /**Handles the urn conversion from a placeName to a URN**/
@@ -158,11 +168,12 @@ function convertURNPlace(){
     cCombo = placeTable[i];
     if(cCombo.label.toLowerCase().indexOf(urnToConv) != -1 && cCombo.status != 'rejected' && cCombo.urn != "urn"){
       matches.push(
-        "<span class='clickLink' onclick='copyTextToClipboard(this)'>" + cCombo.urn + " <> " + cCombo.label + "</span>"
+        "<span class='clickLink' data-toggle='tooltip' title='" + cCombo.description +"' onclick='copyTextToClipboard(this)'>" + cCombo.urn + " <> " + cCombo.label + "</span>"
       );
     }
   }
   $('#urnConvertedPlace').html(matches.join("<br>"));
+  activateTooltips();
 }
 
 /**
