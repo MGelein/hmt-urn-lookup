@@ -1,3 +1,4 @@
+var compDone = false;
 /**Copies text to clipboard from the provided element*/
 function copyTextToClipboard(element){
   var copyText = $(element).text().split('<>')[0];
@@ -137,9 +138,9 @@ function convertURNPers(){
   var matches = [];
   for(var i = 0; i < max; i++){
     cCombo = persTable[i];
-    if(cCombo.Label.toLowerCase().indexOf(urnToConv) != -1 && cCombo.Status != 'rejected' && cCombo.urn != "urn"){
+    if(cCombo.label.toLowerCase().indexOf(urnToConv) != -1 && cCombo.status != 'rejected' && cCombo.urn != "urn"){
         matches.push(
-          "<span class='clickLink' onclick='copyTextToClipboard(this)'>" + cCombo.urn + " <> " + cCombo.Label + "</span>"
+          "<span class='clickLink' onclick='copyTextToClipboard(this)'>" + cCombo.urn + " <> " + cCombo.label + "</span>"
         );
     }
   }
@@ -155,9 +156,9 @@ function convertURNPlace(){
   var matches = [];
   for(var i = 0; i < max; i++){
     cCombo = placeTable[i];
-    if(cCombo.Label.toLowerCase().indexOf(urnToConv) != -1 && cCombo.Status != 'rejected' && cCombo.urn != "urn"){
+    if(cCombo.label.toLowerCase().indexOf(urnToConv) != -1 && cCombo.status != 'rejected' && cCombo.urn != "urn"){
       matches.push(
-        "<span class='clickLink' onclick='copyTextToClipboard(this)'>" + cCombo.urn + " <> " + cCombo.Label + "</span>"
+        "<span class='clickLink' onclick='copyTextToClipboard(this)'>" + cCombo.urn + " <> " + cCombo.label + "</span>"
       );
     }
   }
@@ -169,12 +170,21 @@ Called when the document is ready to be executed
 **/
 $(document).ready(function(){
   $.ajax({
+    url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/relations/vaimg-vapage.cex"})
+    .done(function(data) {
+      indexTable = cexJSON(data, "#!relations", 'folio#relation#index');
+      console.log(indexTable);
+      $('#indexURNIcon').removeClass().addClass('hidden');
+      $('#indexURNLabel').html('');
+  })
+  
+  $.ajax({
     url: "https://raw.githubusercontent.com/homermultitext/hmt-authlists/master/data/hmtnames.cex"})
     .done(function(data) {
       persTable = cexJSON(data, "#!citedata");
       convertURNPers();
       $('#persURNIcon').removeClass().addClass('hidden');
-      $('#persURNLabel').html('');
+      $('#persURNLabel').html('');  
   });
 
   $.ajax({
