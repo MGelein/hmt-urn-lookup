@@ -49,7 +49,6 @@ function convertURNIndex(){
   var max = indexTable.length;
   var cCombo;
   var matches = [];
-  var duplicates = [];
   var index;
   var book;
   var line;
@@ -184,9 +183,11 @@ $(document).ready(function(){
     url: "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/archive/relations/vaimg-vapage.cex"})
     .done(function(data) {
       indexTable = cexJSON(data, "#!relations", 'folio#relation#index');
+      console.log(data);
       console.log(indexTable);
       $('#indexURNIcon').removeClass().addClass('hidden');
       $('#indexURNLabel').html('');
+      convertURNIndex();
   })
   
   $.ajax({
@@ -294,7 +295,7 @@ function csvJSON(csv, userDefinedHeader, headerDef){
  * @param {String} file 
  * @param {String} header 
  */
-function cexJSON(file, header){
+function cexJSON(file, header, useOverride){
   console.log("Converting file");
   var lines = file.split('\n');
   var foundIndex = -1;
@@ -318,6 +319,7 @@ function cexJSON(file, header){
 
   //Read the headerline and parse it into the object
   var headerNames = lines[foundIndex + 1].split('#');
+  if(useOverride) headerNames = useOverride.split("#");
 
   //Go through all the lines and parse them into the object
   for(var i = foundIndex + 2; i < endIndex; i ++){
